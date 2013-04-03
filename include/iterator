@@ -318,7 +318,7 @@ template <class T, size_t N> T* end(T (&array)[N]);
 #include <cstddef>
 #include <iosfwd>
 #ifdef __APPLE__
-#include <Availability.h>
+#include <AvailabilityMacros.h>
 #endif
 
 #ifdef _LIBCPP_DEBUG
