@@ -230,8 +230,10 @@ locale::__imp::__imp(const string& name, size_t refs)
 
 // NOTE avoid the `base class should be explicitly initialized in the
 // copy constructor` warning emitted by GCC
+#if defined(__clang__) || _GNUC_VER >= 406
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wextra"
+#endif
 
 locale::__imp::__imp(const __imp& other)
     : facets_(max<size_t>(N, other.facets_.size())),
@@ -243,7 +245,9 @@ locale::__imp::__imp(const __imp& other)
             facets_[i]->__add_shared();
 }
 
+#if defined(__clang__) || _GNUC_VER >= 406
 #pragma GCC diagnostic pop
+#endif
 
 locale::__imp::__imp(const __imp& other, const string& name, locale::category c)
     : facets_(N),
@@ -1068,28 +1072,28 @@ ctype_byname<char>::~ctype_byname()
 char
 ctype_byname<char>::do_toupper(char_type c) const
 {
-    return static_cast<char>(toupper_l(c, __l));
+    return static_cast<char>(toupper_l(static_cast<unsigned char>(c), __l));
 }
 
 const char*
 ctype_byname<char>::do_toupper(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-        *low = static_cast<char>(toupper_l(*low, __l));
+        *low = static_cast<char>(toupper_l(static_cast<unsigned char>(*low), __l));
     return low;
 }
 
 char
 ctype_byname<char>::do_tolower(char_type c) const
 {
-    return static_cast<char>(tolower_l(c, __l));
+    return static_cast<char>(tolower_l(static_cast<unsigned char>(c), __l));
 }
 
 const char*
 ctype_byname<char>::do_tolower(char_type* low, const char_type* high) const
 {
     for (; low != high; ++low)
-        *low = static_cast<char>(tolower_l(*low, __l));
+        *low = static_cast<char>(tolower_l(static_cast<unsigned char>(*low), __l));
     return low;
 }
 
