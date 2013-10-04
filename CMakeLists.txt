@@ -14,9 +14,9 @@ set(PACKAGE_BUGREPORT "llvmbugs@cs.uiuc.edu")
 
 # Add path for custom modules
 set(CMAKE_MODULE_PATH
-  ${CMAKE_MODULE_PATH}
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"
+  ${CMAKE_MODULE_PATH}
   )
 
 # Require out of source build.
@@ -38,6 +38,7 @@ option(LIBCXX_ENABLE_PEDANTIC "Compile with pedantic enabled." ON)
 option(LIBCXX_ENABLE_WERROR "Fail and stop if a warning is triggered." OFF)
 option(LIBCXX_ENABLE_CXX0X "Enable -std=c++0x and use of c++0x language features if the compiler supports it." ON)
 option(LIBCXX_ENABLE_SHARED "Build libc++ as a shared library." ON)
+option(LIBCXX_INSTALL_SUPPORT_HEADERS "Install libc++ support headers." ON)
 
 set(CXXABIS none libcxxabi libcxxrt libsupc++)
 if (NOT DEFINED LIBCXX_CXX_ABI)
@@ -45,7 +46,7 @@ if (NOT DEFINED LIBCXX_CXX_ABI)
 endif()
 set(LIBCXX_CXX_ABI "${LIBCXX_CXX_ABI}" CACHE STRING
     "Specify C++ ABI library to use." FORCE)
-set_property(CACHE LIBCXX_CXX_ABI PROPERTY STRINGS "";${CXXABIS})
+set_property(CACHE LIBCXX_CXX_ABI PROPERTY STRINGS ;${CXXABIS})
 
 #===============================================================================
 # Configure System
