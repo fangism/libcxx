@@ -7,15 +7,13 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
-#include <string>
+#include <complex>
 #include <cassert>
 
 int main()
 {
 #if _LIBCPP_STD_VER > 11 
-    using std::string;
-
-    string foo  =   ""s;  // should fail w/conversion operator not found
+    std::complex<float> foo  = 1.0if;  // should fail w/conversion operator not found
 #else
 #error
 #endif
