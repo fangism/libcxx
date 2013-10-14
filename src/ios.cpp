@@ -63,7 +63,7 @@ __iostream_category::message(int ev) const
 }
 
 const error_category&
-iostream_category()
+iostream_category() _NOEXCEPT
 {
     static __iostream_category s;
     return s;
@@ -149,8 +149,11 @@ ios_base::getloc() const
 }
 
 // xalloc
-
+#if __has_feature(cxx_atomic)
+atomic<int> ios_base::__xindex_ = ATOMIC_VAR_INIT(0);
+#else
 int ios_base::__xindex_ = 0;
+#endif
 
 int
 ios_base::xalloc()
