@@ -150,8 +150,12 @@ operator delete[] (void* ptr, const std::nothrow_t&) _NOEXCEPT
 namespace std
 {
 
+#if	!defined(DARWIN8)
 #ifndef __GLIBCXX__
 const nothrow_t nothrow = {};
+#endif
+#else
+// provided by darwin8's libsupc++.a
 #endif
 
 #ifndef _LIBCPPABI_VERSION

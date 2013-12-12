@@ -16,7 +16,8 @@
 #define __has_include(inc) 0
 #endif
 
-#ifdef __APPLE__
+// darwin8: there is no __cxxabiapple namespace anywhere
+#if defined(__APPLE__) && !defined(DARWIN8)
   #include <cxxabi.h>
 
   using namespace __cxxabiv1;
@@ -106,6 +107,7 @@ terminate() _NOEXCEPT
 #endif // !defined(LIBCXXRT) && !defined(_LIBCPPABI_VERSION)
 
 #if !defined(LIBCXXRT) && !defined(__GLIBCXX__) && !defined(__EMSCRIPTEN__)
+#if !defined(DARWIN8)
 bool uncaught_exception() _NOEXCEPT
 {
 #if defined(__APPLE__) || defined(_LIBCPPABI_VERSION)
@@ -121,6 +123,9 @@ bool uncaught_exception() _NOEXCEPT
     ::abort();
 #endif  // __APPLE__
 }
+#else
+// provided by darwin8 libsupc++.a
+#endif
 
 
 #ifndef _LIBCPPABI_VERSION
@@ -149,7 +154,9 @@ const char* bad_exception::what() const _NOEXCEPT
 
 #endif
 
-#if defined(__GLIBCXX__)
+#define	GLIBCXX_HAS___EXCEPTION_PTR		!defined(DARWIN8)
+
+#if defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
 
 // libsupc++ does not implement the dependent EH ABI and the functionality
 // it uses to implement std::exception_ptr (which it declares as an alias of
@@ -182,7 +189,7 @@ exception_ptr::~exception_ptr() _NOEXCEPT
 {
 #if HAVE_DEPENDENT_EH_ABI
     __cxa_decrement_exception_refcount(__ptr_);
-#elif defined(__GLIBCXX__)
+#elif defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
     reinterpret_cast<__exception_ptr::exception_ptr*>(this)->~exception_ptr();
 #else
 #   if defined(_MSC_VER) && ! defined(__clang__)
@@ -200,7 +207,7 @@ exception_ptr::exception_ptr(const exception_ptr& other) _NOEXCEPT
 {
 #if HAVE_DEPENDENT_EH_ABI
     __cxa_increment_exception_refcount(__ptr_);
-#elif defined(__GLIBCXX__)
+#elif defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
     new (reinterpret_cast<void*>(this)) __exception_ptr::exception_ptr(
         reinterpret_cast<const __exception_ptr::exception_ptr&>(other));
 #else
@@ -224,7 +231,7 @@ exception_ptr& exception_ptr::operator=(const exception_ptr& other) _NOEXCEPT
         __ptr_ = other.__ptr_;
     }
     return *this;
-#elif defined(__GLIBCXX__)
+#elif defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
     *reinterpret_cast<__exception_ptr::exception_ptr*>(this) =
         reinterpret_cast<const __exception_ptr::exception_ptr&>(other);
     return *this;
@@ -244,7 +251,7 @@ nested_exception::nested_exception() _NOEXCEPT
 {
 }
 
-#if !defined(__GLIBCXX__)
+#if !defined(__GLIBCXX__) || defined(DARWIN8)
 
 nested_exception::~nested_exception() _NOEXCEPT
 {
@@ -261,7 +268,7 @@ nested_exception::rethrow_nested() const
     rethrow_exception(__ptr_);
 }
 
-#if !defined(__GLIBCXX__)
+#if !defined(__GLIBCXX__) || defined(DARWIN8)
 
 exception_ptr current_exception() _NOEXCEPT
 {
@@ -292,7 +299,7 @@ void rethrow_exception(exception_ptr p)
     __cxa_rethrow_primary_exception(p.__ptr_);
     // if p.__ptr_ is NULL, above returns so we terminate
     terminate();
-#elif defined(__GLIBCXX__)
+#elif defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
     rethrow_exception(reinterpret_cast<__exception_ptr::exception_ptr&>(p));
 #else
 #   if defined(_MSC_VER) && ! defined(__clang__)
