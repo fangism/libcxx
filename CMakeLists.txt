@@ -136,8 +136,10 @@ endmacro()
 if ("${LIBCXX_CXX_ABI}" STREQUAL "libstdc++" OR
     "${LIBCXX_CXX_ABI}" STREQUAL "libsupc++")
   set(_LIBSUPCXX_INCLUDE_FILES
-    cxxabi.h bits/c++config.h bits/os_defines.h bits/cpu_defines.h
-    bits/cxxabi_tweaks.h bits/cxxabi_forced.h
+    cxxabi.h bits/c++config.h bits/os_defines.h
+# bits/cpu_defines.h
+    bits/cxxabi_tweaks.h
+# bits/cxxabi_forced.h
     )
   if ("${LIBCXX_CXX_ABI}" STREQUAL "libstdc++")
     set(_LIBSUPCXX_DEFINES "-DLIBSTDCXX")
