@@ -17,7 +17,7 @@
 #define __has_include(inc) 0
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(DARWIN8_LIBSUPCXX)
     #include <cxxabi.h>
 
     #ifndef _LIBCPPABI_VERSION
@@ -30,6 +30,9 @@
     #if defined(LIBCXXRT) || __has_include(<cxxabi.h>)
         #include <cxxabi.h>
     #endif  // __has_include(<cxxabi.h>)
+    #if defined(DARWIN8_LIBSUPCXX)
+        extern std::new_handler	__new_handler;
+    #endif
     #if !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__)
         static std::new_handler __new_handler;
     #endif  // _LIBCPPABI_VERSION
@@ -150,12 +153,10 @@ operator delete[] (void* ptr, const std::nothrow_t&) _NOEXCEPT
 namespace std
 {
 
-#if	!defined(DARWIN8)
+#if	!defined(DARWIN8_LIBSUPCXX)
 #ifndef __GLIBCXX__
 const nothrow_t nothrow = {};
 #endif
-#else
-// provided by darwin8's libsupc++.a
 #endif
 
 #ifndef _LIBCPPABI_VERSION
@@ -167,7 +168,8 @@ set_new_handler(new_handler handler) _NOEXCEPT
 {
     return __sync_lock_test_and_set(&__new_handler, handler);
 }
-
+#endif
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 new_handler
 get_new_handler() _NOEXCEPT
 {
@@ -187,7 +189,9 @@ bad_alloc::bad_alloc() _NOEXCEPT
 bad_alloc::~bad_alloc() _NOEXCEPT
 {
 }
+#endif // !__GLIBCXX__
 
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 const char*
 bad_alloc::what() const _NOEXCEPT
 {

@@ -17,7 +17,7 @@
 #endif
 
 // darwin8: there is no __cxxabiapple namespace anywhere
-#if defined(__APPLE__) && !defined(DARWIN8)
+#if defined(__APPLE__) && !defined(DARWIN8_LIBSUPCXX)
   #include <cxxabi.h>
 
   using namespace __cxxabiv1;
@@ -32,6 +32,12 @@
   #endif  // _LIBCPPABI_VERSION
 #elif defined(LIBCXXRT) || __has_include(<cxxabi.h>)
   #include <cxxabi.h>
+  #if defined(DARWIN8_LIBSUPCXX)
+  namespace __cxxabiv1 {
+    extern std::terminate_handler  __terminate_handler;
+    extern std::unexpected_handler __unexpected_handler;
+  }
+  #endif
   using namespace __cxxabiv1;
   #if defined(LIBCXXRT) || defined(_LIBCPPABI_VERSION)
     #define HAVE_DEPENDENT_EH_ABI 1
@@ -44,7 +50,8 @@
 namespace std
 {
 
-#if !defined(LIBCXXRT) && !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__)
+#define	__PRED__	!defined(LIBCXXRT) && !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__)
+#if __PRED__
 
 // libcxxrt provides implementations of these functions itself.
 unexpected_handler
@@ -52,13 +59,16 @@ set_unexpected(unexpected_handler func) _NOEXCEPT
 {
     return __sync_lock_test_and_set(&__unexpected_handler, func);
 }
-
+#endif
+#if __PRED__ || defined(DARWIN8_LIBSUPCXX)
 unexpected_handler
 get_unexpected() _NOEXCEPT
 {
+// FIXME: see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/eh_terminate.cc
     return __sync_fetch_and_add(&__unexpected_handler, (unexpected_handler)0);
 }
-
+#endif
+#if __PRED__
 _LIBCPP_NORETURN
 void
 unexpected()
@@ -74,12 +84,16 @@ set_terminate(terminate_handler func) _NOEXCEPT
     return __sync_lock_test_and_set(&__terminate_handler, func);
 }
 
+#endif
+#if __PRED__ || defined(DARWIN8_LIBSUPCXX)
 terminate_handler
 get_terminate() _NOEXCEPT
 {
+// FIXME: see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/eh_terminate.cc
     return __sync_fetch_and_add(&__terminate_handler, (terminate_handler)0);
 }
-
+#endif
+#if __PRED__
 #ifndef __EMSCRIPTEN__ // We provide this in JS
 _LIBCPP_NORETURN
 void
@@ -105,9 +119,10 @@ terminate() _NOEXCEPT
 }
 #endif // !__EMSCRIPTEN__
 #endif // !defined(LIBCXXRT) && !defined(_LIBCPPABI_VERSION)
+#undef	__PRED__
 
 #if !defined(LIBCXXRT) && !defined(__GLIBCXX__) && !defined(__EMSCRIPTEN__)
-#if !defined(DARWIN8)
+#if !defined(DARWIN8_LIBSUPCXX)
 bool uncaught_exception() _NOEXCEPT
 {
 #if defined(__APPLE__) || defined(_LIBCPPABI_VERSION)
@@ -123,8 +138,6 @@ bool uncaught_exception() _NOEXCEPT
     ::abort();
 #endif  // __APPLE__
 }
-#else
-// provided by darwin8 libsupc++.a
 #endif
 
 
@@ -146,7 +159,8 @@ const char* exception::what() const _NOEXCEPT
 bad_exception::~bad_exception() _NOEXCEPT
 {
 }
-
+#endif
+#if !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 const char* bad_exception::what() const _NOEXCEPT
 {
   return "std::bad_exception";
@@ -154,7 +168,7 @@ const char* bad_exception::what() const _NOEXCEPT
 
 #endif
 
-#define	GLIBCXX_HAS___EXCEPTION_PTR		!defined(DARWIN8)
+#define	GLIBCXX_HAS___EXCEPTION_PTR		!defined(DARWIN8_LIBSUPCXX)
 
 #if defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
 
@@ -251,7 +265,7 @@ nested_exception::nested_exception() _NOEXCEPT
 {
 }
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8)
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 
 nested_exception::~nested_exception() _NOEXCEPT
 {
@@ -268,7 +282,7 @@ nested_exception::rethrow_nested() const
     rethrow_exception(__ptr_);
 }
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8)
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 
 exception_ptr current_exception() _NOEXCEPT
 {

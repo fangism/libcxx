@@ -35,23 +35,29 @@ std::bad_typeid::bad_typeid() _NOEXCEPT
 std::bad_cast::~bad_cast() _NOEXCEPT
 {
 }
+#endif
 
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 const char*
 std::bad_cast::what() const _NOEXCEPT
 {
   return "std::bad_cast";
 }
+#endif
 
+#ifndef __GLIBCXX__
 std::bad_typeid::~bad_typeid() _NOEXCEPT
 {
 }
-
+#endif
+#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
 const char*
 std::bad_typeid::what() const _NOEXCEPT
 {
   return "std::bad_typeid";
 }
-
+#endif
+#ifndef __GLIBCXX__
 #ifdef __APPLE__
   // On Darwin, the cxa_bad_* functions cannot be in the lower level library
   // because bad_cast and bad_typeid are defined in his higher level library

@@ -24,6 +24,7 @@ done
 
 cd ..
 LIBCXX_ROOT=`pwd`
+cpd=`echo "$LIBCXX_ROOT" | awk 'BEGIN{FS="/";}{print NF+1;}'`
 cd $origpath
 
 if [ -z "$CC" ]
@@ -36,6 +37,10 @@ then
 	fi
 fi
 
+if [ -z "$KEEP_EXE" ]
+then
+	KEEP_EXE=1
+fi
 if [ -z "$OPTIONS" ]
 then
 	OPTIONS="-std=c++11 -stdlib=libc++"
@@ -52,6 +57,7 @@ then
        SOURCE_LIB="-L$LIBCXX_ROOT/lib"
 fi
 
+# use distinct test executables (parallelizable)
 case $TRIPLE in
   *-*-mingw* | *-*-cygwin* | *-*-win*)
 	TEST_EXE=test.exe
@@ -74,14 +80,16 @@ IMPLEMENTED_FAIL=0
 IMPLEMENTED_PASS=0
 
 afunc() {
+	rwd=`pwd | cut -d/ -f$cpd-`
 	fail=0
 	pass=0
 	if (ls *.fail.cpp > /dev/null 2>&1)
 	then
 		for FILE in $(ls *.fail.cpp); do
-			if $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS -o ./$TEST_EXE > /dev/null 2>&1
+			t_exe=`basename $FILE .cpp`
+			if $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS -o ./$t_exe > /dev/null 2>&1
 			then
-				rm ./$TEST_EXE
+				test "$KEEP_EXE" = 1 || rm ./$t_exe
 				echo "$FILE should not compile"
 				fail=$(($fail+1))
 			else
@@ -93,24 +101,25 @@ afunc() {
 	if (ls *.pass.cpp > /dev/null 2>&1)
 	then
 		for FILE in $(ls *.pass.cpp); do
+		t_exe=`basename $FILE .cpp`
             if [ "$VERBOSE" ]
             then
              	echo "Running test: " $FILE
             fi
-			if $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS) -o ./$TEST_EXE
+			if $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS) -o ./$t_exe
 			then
-				if ./$TEST_EXE
+				if ./$t_exe
 				then
-					rm ./$TEST_EXE
+					test "$KEEP_EXE" = 1 || rm ./$t_exe
 					pass=$(($pass+1))
 				else
-					echo "`pwd`/$FILE failed at run time"
+					echo "$rwd/$FILE failed at run time"
 					echo "Compile line was:" $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS)
 					fail=$(($fail+1))
-					rm ./$TEST_EXE
+					test "$KEEP_EXE" = 1 || rm ./$t_exe
 				fi
 			else
-				echo "`pwd`/$FILE failed to compile"
+				echo "$rwd/$FILE failed to compile"
 				echo "Compile line was:" $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS)
 				fail=$(($fail+1))
 			fi
@@ -119,12 +128,12 @@ afunc() {
 
 	if [ $fail -gt 0 ]
 	then
-		echo "failed $fail tests in `pwd`"
+		echo "failed $fail tests in $rwd"
 		IMPLEMENTED_FAIL=$(($IMPLEMENTED_FAIL+1))
 	fi
 	if [ $pass -gt 0 ]
 	then
-		echo "passed $pass tests in `pwd`"
+		echo "passed $pass tests in $rwd"
 		if [ $fail -eq 0 ]
 		then
 			IMPLEMENTED_PASS=$((IMPLEMENTED_PASS+1))
@@ -132,7 +141,7 @@ afunc() {
 	fi
 	if [ $fail -eq 0 -a $pass -eq 0 ]
 	then
-		echo "not implemented:  `pwd`"
+		echo "not implemented:  $rwd"
 		UNIMPLEMENTED=$(($UNIMPLEMENTED+1))
 	fi
 
@@ -159,6 +168,7 @@ afunc no
 echo "****************************************************"
 echo "Results for `pwd`:"
 echo "using `$CC --version`"
+echo "  (`which $CC`)"
 echo "with $OPTIONS $HEADER_INCLUDE $SOURCE_LIB"
 echo "----------------------------------------------------"
 echo "sections without tests   : $UNIMPLEMENTED"
