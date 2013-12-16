@@ -47,6 +47,13 @@
   static std::unexpected_handler __unexpected_handler;
 #endif // __has_include(<cxxabi.h>)
 
+#if defined(__APPLE__) && defined(DARWIN8_LIBSUPCXX)
+// should clang provide -DPIC
+#define	PIC	1
+#include <bits/os_defines.h>
+// see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/eh_terminate.cc
+#endif
+
 namespace std
 {
 
@@ -64,8 +71,14 @@ set_unexpected(unexpected_handler func) _NOEXCEPT
 unexpected_handler
 get_unexpected() _NOEXCEPT
 {
-// FIXME: see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/eh_terminate.cc
+#if defined(__APPLE__) && defined(__ppc__) && defined(PIC)
+    const std::unexpected_handler
+	old(reinterpret_cast<std::unexpected_handler>(
+		_keymgr_get_per_thread_data(KEYMGR_UNEXPECTED_HANDLER_KEY)));
+    return old ? old : __unexpected_handler;
+#else
     return __sync_fetch_and_add(&__unexpected_handler, (unexpected_handler)0);
+#endif /* __APPLE__ etc. */
 }
 #endif
 #if __PRED__
@@ -90,7 +103,14 @@ terminate_handler
 get_terminate() _NOEXCEPT
 {
 // FIXME: see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/eh_terminate.cc
+#if defined(__APPLE__) && defined(__ppc__) && defined(PIC)
+    const std::terminate_handler
+	old(reinterpret_cast<std::terminate_handler>(
+		_keymgr_get_per_thread_data(KEYMGR_TERMINATE_HANDLER_KEY)));
+    return old ? old : __terminate_handler;
+#else
     return __sync_fetch_and_add(&__terminate_handler, (terminate_handler)0);
+#endif
 }
 #endif
 #if __PRED__
