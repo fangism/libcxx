@@ -3,3 +3,9 @@
 *.o
 *.dylib
 *.a
+temp.*
+a.out
+*.pass
+*.fail
+*.log
+*.bz2
