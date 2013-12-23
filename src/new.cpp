@@ -38,6 +38,13 @@
     #endif  // _LIBCPPABI_VERSION
 #endif
 
+#if defined(__APPLE__) && defined(DARWIN8_LIBSUPCXX)
+// should clang provide -DPIC
+#define	PIC	1
+#include <bits/os_defines.h>
+// see https://www.opensource.apple.com/source/libstdcxx/libstdcxx-39/libstdcxx/libstdc++-v3/libsupc++/new_handler.cc
+#endif
+
 #ifndef __GLIBCXX__
 
 // Implement all new and delete operators as weak definitions
@@ -173,7 +180,15 @@ set_new_handler(new_handler handler) _NOEXCEPT
 new_handler
 get_new_handler() _NOEXCEPT
 {
+/* APPLE LOCAL begin keymgr */
+#if defined(__APPLE__) && defined(__ppc__) && defined(PIC)
+    const new_handler prev_handler(reinterpret_cast<new_handler>(
+	_keymgr_get_per_thread_data(KEYMGR_NEW_HANDLER_KEY)));
+    return prev_handler ? prev_handler : __new_handler;
+#else	/* __APPLE__ etc. */
     return __sync_fetch_and_add(&__new_handler, (new_handler)0);
+#endif	/* __APPLE__ etc. */
+/* APPLE LOCAL end keymgr */
 }
 
 #endif // !__GLIBCXX__
