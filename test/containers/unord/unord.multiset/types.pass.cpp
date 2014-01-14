@@ -45,7 +45,8 @@ int main()
         static_assert((std::is_same<C::const_reference, const C::value_type&>::value), "");
         static_assert((std::is_same<C::pointer, C::value_type*>::value), "");
         static_assert((std::is_same<C::const_pointer, const C::value_type*>::value), "");
-        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+//        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+        static_assert(sizeof(C::size_type) == sizeof(std::size_t), "");
         static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #if __cplusplus >= 201103L
@@ -61,7 +62,8 @@ int main()
         static_assert((std::is_same<C::const_reference, const C::value_type&>::value), "");
         static_assert((std::is_same<C::pointer, min_pointer<C::value_type>>::value), "");
         static_assert((std::is_same<C::const_pointer, min_pointer<const C::value_type>>::value), "");
-        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+//        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+        static_assert(sizeof(C::size_type) == sizeof(std::size_t), "");
         static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif

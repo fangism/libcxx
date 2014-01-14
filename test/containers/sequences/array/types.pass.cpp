@@ -40,7 +40,8 @@ int main()
         static_assert((std::is_same<C::const_iterator, const T*>::value), "");
         static_assert((std::is_same<C::pointer, T*>::value), "");
         static_assert((std::is_same<C::const_pointer, const T*>::value), "");
-        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+//        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+        static_assert(sizeof(C::size_type) == sizeof(std::size_t), "");
         static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
         static_assert((std::is_same<C::reverse_iterator, std::reverse_iterator<C::iterator> >::value), "");
         static_assert((std::is_same<C::const_reverse_iterator, std::reverse_iterator<C::const_iterator> >::value), "");
@@ -54,7 +55,8 @@ int main()
         static_assert((std::is_same<C::const_iterator, const T*>::value), "");
         static_assert((std::is_same<C::pointer, T*>::value), "");
         static_assert((std::is_same<C::const_pointer, const T*>::value), "");
-        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+//        static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+        static_assert(sizeof(C::size_type) == sizeof(std::size_t), "");
         static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
         static_assert((std::is_same<C::reverse_iterator, std::reverse_iterator<C::iterator> >::value), "");
         static_assert((std::is_same<C::const_reverse_iterator, std::reverse_iterator<C::const_iterator> >::value), "");
