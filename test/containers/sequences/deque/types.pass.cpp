@@ -36,6 +36,7 @@
 #include "../../test_allocator.h"
 #include "../../Copyable.h"
 #include "min_allocator.h"
+#include "powerpc-darwin.h"
 
 template <class T, class Allocator>
 void
@@ -82,7 +83,11 @@ int main()
         static_assert((std::is_same<C::const_reference, const C::value_type&>::value), "");
         static_assert((std::is_same<C::pointer, min_pointer<C::value_type>>::value), "");
         static_assert((std::is_same<C::const_pointer, min_pointer<const C::value_type>>::value), "");
+#ifdef	PTRDIFF_T_VS_SIZE_T_DIFFER
+        static_assert(sizeof(C::size_type) == sizeof(std::size_t), "");
+#else
         static_assert((std::is_same<C::size_type, std::size_t>::value), "");
+#endif
         static_assert((std::is_same<C::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif
