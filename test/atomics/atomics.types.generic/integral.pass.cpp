@@ -88,6 +88,8 @@
 #include <new>
 #include <cassert>
 
+#include "powerpc-darwin.h"
+
 template <class A, class T>
 void
 do_test()
@@ -160,7 +162,6 @@ void test()
     do_test<volatile A, T>();
 }
 
-
 int main()
 {
     test<std::atomic_char, char>();
@@ -172,8 +173,10 @@ int main()
     test<std::atomic_uint, unsigned int>();
     test<std::atomic_long, long>();
     test<std::atomic_ulong, unsigned long>();
+#ifndef	MISSING_64B_ATOMIC_OPS
     test<std::atomic_llong, long long>();
     test<std::atomic_ullong, unsigned long long>();
+#endif
 #ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
     test<std::atomic_char16_t, char16_t>();
     test<std::atomic_char32_t, char32_t>();
@@ -189,8 +192,10 @@ int main()
     test<volatile std::atomic_uint, unsigned int>();
     test<volatile std::atomic_long, long>();
     test<volatile std::atomic_ulong, unsigned long>();
+#ifndef	MISSING_64B_ATOMIC_OPS
     test<volatile std::atomic_llong, long long>();
     test<volatile std::atomic_ullong, unsigned long long>();
+#endif
 #ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
     test<volatile std::atomic_char16_t, char16_t>();
     test<volatile std::atomic_char32_t, char32_t>();

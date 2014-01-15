@@ -30,6 +30,8 @@
 #include <type_traits>
 #include <cassert>
 
+#include "powerpc-darwin.h"
+
 template <class T>
 void
 test()
@@ -101,8 +103,10 @@ int main()
     test<unsigned int>();
     test<long>();
     test<unsigned long>();
+#ifndef	MISSING_64B_ATOMIC_OPS
     test<long long>();
     test<unsigned long long>();
+#endif
     test<wchar_t>();
 #ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
     test<char16_t>();
