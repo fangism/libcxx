@@ -29,6 +29,7 @@
 #include <type_traits>
 
 #include "min_allocator.h"
+#include "powerpc-darwin.h"
 
 int main()
 {
@@ -38,8 +39,11 @@ int main()
     static_assert((std::is_same<std::forward_list<char>::const_reference, const char&>::value), "");
     static_assert((std::is_same<std::forward_list<char>::pointer, char*>::value), "");
     static_assert((std::is_same<std::forward_list<char>::const_pointer, const char*>::value), "");
-//    static_assert((std::is_same<std::forward_list<char>::size_type, std::size_t>::value), "");
+#ifdef	PTRDIFF_T_VS_SIZE_T_DIFFER
     static_assert(sizeof(std::forward_list<char>::size_type) == sizeof(std::size_t), "");
+#else
+    static_assert((std::is_same<std::forward_list<char>::size_type, std::size_t>::value), "");
+#endif
     static_assert((std::is_same<std::forward_list<char>::difference_type, std::ptrdiff_t>::value), "");
 #if __cplusplus >= 201103L
     static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::value_type, char>::value), "");
@@ -48,8 +52,11 @@ int main()
     static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::const_reference, const char&>::value), "");
     static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::pointer, min_pointer<char>>::value), "");
     static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::const_pointer, min_pointer<const char>>::value), "");
-//    static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::size_type, std::size_t>::value), "");
+#ifdef	PTRDIFF_T_VS_SIZE_T_DIFFER
     static_assert(sizeof(std::forward_list<char, min_allocator<char>>::size_type) == sizeof(std::size_t), "");
+#else
+    static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::size_type, std::size_t>::value), "");
+#endif
     static_assert((std::is_same<std::forward_list<char, min_allocator<char>>::difference_type, std::ptrdiff_t>::value), "");
 #endif
 }

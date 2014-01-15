@@ -33,6 +33,7 @@
 #include <type_traits>
 
 #include "min_allocator.h"
+#include "powerpc-darwin.h"
 
 int main()
 {
@@ -60,9 +61,11 @@ int main()
     static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::const_reference, const std::pair<const int, double>&>::value), "");
     static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::pointer, min_pointer<std::pair<const int, double>>>::value), "");
     static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::const_pointer, min_pointer<const std::pair<const int, double>>>::value), "");
-// ptrdiff_t is int on darwin8 != long, not considered is_same
-//    static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::size_type, std::size_t>::value), "");
+#ifdef	PTRDIFF_T_VS_SIZE_T_DIFFER
     static_assert(sizeof(std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::size_type) == sizeof(std::size_t), "");
+#else
+    static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::size_type, std::size_t>::value), "");
+#endif
     static_assert((std::is_same<std::map<int, double, std::less<int>, min_allocator<std::pair<const int, double>>>::difference_type, std::ptrdiff_t>::value), "");
     }
 #endif
