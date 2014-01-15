@@ -23,25 +23,32 @@ test()
     static_assert(std::numeric_limits<const volatile T>::traps == expected, "traps test 4");
 }
 
+// see <limits>:
+#if	(defined(__i386__) || defined(__x86_64__))
+static const bool is_x86 = true;
+#else
+static const bool is_x86 = false;
+#endif
+
 int main()
 {
     test<bool, false>();
-    test<char, true>();
-    test<signed char, true>();
-    test<unsigned char, true>();
-    test<wchar_t, true>();
+    test<char, is_x86>();
+    test<signed char, is_x86>();
+    test<unsigned char, is_x86>();
+    test<wchar_t, is_x86>();
 #ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
-    test<char16_t, true>();
-    test<char32_t, true>();
+    test<char16_t, is_x86>();
+    test<char32_t, is_x86>();
 #endif  // _LIBCPP_HAS_NO_UNICODE_CHARS
-    test<short, true>();
-    test<unsigned short, true>();
-    test<int, true>();
-    test<unsigned int, true>();
-    test<long, true>();
-    test<unsigned long, true>();
-    test<long long, true>();
-    test<unsigned long long, true>();
+    test<short, is_x86>();
+    test<unsigned short, is_x86>();
+    test<int, is_x86>();
+    test<unsigned int, is_x86>();
+    test<long, is_x86>();
+    test<unsigned long, is_x86>();
+    test<long long, is_x86>();
+    test<unsigned long long, is_x86>();
     test<float, false>();
     test<double, false>();
     test<long double, false>();
