@@ -1528,4 +1528,50 @@ typedef atomic<uintmax_t> atomic_uintmax_t;
 
 _LIBCPP_END_NAMESPACE_STD
 
+#if	defined(__ppc__) && !defined(__ppc64__)
+// specialize fallback implementation where 64b atomics are missing
+#include <__atomic_locked>
+
+_LIBCPP_BEGIN_NAMESPACE_STD
+
+template <>
+struct atomic<long long> : public __atomic_mutex_locked<long long>
+{
+    typedef long long		_Tp;
+    typedef __atomic_mutex_locked<_Tp> __base;
+    _LIBCPP_INLINE_VISIBILITY
+    atomic() _NOEXCEPT _LIBCPP_DEFAULT
+    _LIBCPP_INLINE_VISIBILITY
+    _LIBCPP_CONSTEXPR atomic(_Tp __d) _NOEXCEPT : __base(__d) {}
+
+    _LIBCPP_INLINE_VISIBILITY
+    _Tp operator=(_Tp __d) volatile _NOEXCEPT
+        {__base::store(__d); return __d;}
+    _LIBCPP_INLINE_VISIBILITY
+    _Tp operator=(_Tp __d) _NOEXCEPT
+        {__base::store(__d); return __d;}
+};
+
+template <>
+struct atomic<unsigned long long> :
+	public __atomic_mutex_locked<unsigned long long>
+{
+    typedef unsigned long long		_Tp;
+    typedef __atomic_mutex_locked<_Tp> __base;
+    _LIBCPP_INLINE_VISIBILITY
+    atomic() _NOEXCEPT _LIBCPP_DEFAULT
+    _LIBCPP_INLINE_VISIBILITY
+    _LIBCPP_CONSTEXPR atomic(_Tp __d) _NOEXCEPT : __base(__d) {}
+
+    _LIBCPP_INLINE_VISIBILITY
+    _Tp operator=(_Tp __d) volatile _NOEXCEPT
+        {__base::store(__d); return __d;}
+    _LIBCPP_INLINE_VISIBILITY
+    _Tp operator=(_Tp __d) _NOEXCEPT
+        {__base::store(__d); return __d;}
+};
+
+_LIBCPP_END_NAMESPACE_STD
+#endif	// defined(__ppc__) && !defined(__ppc64__)
+
 #endif  // _LIBCPP_ATOMIC

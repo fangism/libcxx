@@ -15,8 +15,9 @@
 	PPC32 doesn't have native 64b atomic operations.
 	Thus, they must be emulated using mutex or lock.
 	TODO: provide specializations of struct atomic using std::mutex.
+	TODO: implement in compiler front-end
+	Undefine the following to enable mutex-based emulated 64b atomics.
  */
-#define	MISSING_64B_ATOMIC_OPS
-// #define	EMULATE_64B_ATOMIC_OPS
+// #define	MISSING_64B_ATOMIC_OPS
 
 #endif	// __LIBCXX_TEST_SUPPORT_POWERPC_DARWIN_H__
