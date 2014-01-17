@@ -1,6 +1,9 @@
 *.ii
+*.ii-*
 *.s
+*.s-*
 *.o
+*.o-*
 *.dylib
 *.a
 temp.*
