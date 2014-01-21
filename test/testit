@@ -41,9 +41,13 @@ if [ -z "$KEEP_EXE" ]
 then
 	KEEP_EXE=1
 fi
+if [ -z "$CXX_LANG" ]
+then
+    CXX_LANG=c++11
+fi
 if [ -z "$OPTIONS" ]
 then
-	OPTIONS="-std=c++11 -stdlib=libc++"
+	OPTIONS="-std=${CXX_LANG} -stdlib=libc++"
 fi
 OPTIONS="$OPTIONS -I$LIBCXX_ROOT/test/support"
 
@@ -83,9 +87,9 @@ afunc() {
 	rwd=`pwd | cut -d/ -f$cpd-`
 	fail=0
 	pass=0
-	if (ls *.fail.cpp > /dev/null 2>&1)
+	if (ls ${TEST_PREFIX}*fail.cpp > /dev/null 2>&1)
 	then
-		for FILE in $(ls *.fail.cpp); do
+		for FILE in $(ls ${TEST_PREFIX}*fail.cpp); do
 			t_exe=`basename $FILE .cpp`
 			if $CC $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS -o ./$t_exe > /dev/null 2>&1
 			then
@@ -98,9 +102,9 @@ afunc() {
 		done
 	fi
 
-	if (ls *.pass.cpp > /dev/null 2>&1)
+	if (ls ${TEST_PREFIX}*pass.cpp > /dev/null 2>&1)
 	then
-		for FILE in $(ls *.pass.cpp); do
+		for FILE in $(ls ${TEST_PREFIX}*pass.cpp); do
 		t_exe=`basename $FILE .cpp`
             if [ "$VERBOSE" ]
             then

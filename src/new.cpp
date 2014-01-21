@@ -186,7 +186,7 @@ get_new_handler() _NOEXCEPT
 	_keymgr_get_per_thread_data(KEYMGR_NEW_HANDLER_KEY)));
     return prev_handler ? prev_handler : __new_handler;
 #else	/* __APPLE__ etc. */
-    return __sync_fetch_and_add(&__new_handler, (new_handler)0);
+    return __sync_fetch_and_add(&__new_handler, nullptr);
 #endif	/* __APPLE__ etc. */
 /* APPLE LOCAL end keymgr */
 }
