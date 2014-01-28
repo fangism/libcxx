@@ -50,6 +50,23 @@ append_if(compile_flags LIBCXX_HAS_FPIC_FLAG -fPIC)
 append_if(link_flags LIBCXX_HAS_NODEFAULTLIBS_FLAG -nodefaultlibs)
 
 if ( APPLE )
+  if ( CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "10.6" )
+    # libc++ must be built with clang++
+    execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-search-dirs
+      COMMAND grep "libraries:"
+      COMMAND cut -d= -f2
+      OUTPUT_VARIABLE CXX_LIBDIR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    list(APPEND compile_flags "-U__STRICT_ANSI__")
+    list(APPEND link_flags
+      "-compatibility_version 1"
+      "-Wl,-unexported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/libc++unexp.exp"
+      "-lgcc_s.${CMAKE_OSX_DEPLOYMENT_TARGET}"
+      "${CXX_LIBDIR}/lib/darwin/libclang_rt.${CMAKE_OSX_ARCHITECTURES}.a"
+      "/usr/lib/libSystem.B.dylib"
+      "-lSystemStubs" )
+  else()
   if ( CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "10.6" )
     list(APPEND compile_flags "-U__STRICT_ANSI__")
     list(APPEND link_flags
@@ -82,6 +99,7 @@ if ( APPLE )
       "${OSX_RE_EXPORT_LINE}"
       "-Wl,-force_symbols_not_weak_list,${CMAKE_CURRENT_SOURCE_DIR}/notweak.exp"
       "-Wl,-force_symbols_weak_list,${CMAKE_CURRENT_SOURCE_DIR}/weak.exp")
+  endif()
   endif()
 endif()
 
