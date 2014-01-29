@@ -104,6 +104,7 @@ if ( APPLE )
 endif()
 
 string(REPLACE ";" " " link_flags "${link_flags}")
+string(REPLACE ";" " " compile_flags "${compile_flags}")
 
 set_target_properties(cxx
   PROPERTIES
