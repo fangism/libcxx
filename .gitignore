@@ -3,3 +3,7 @@
 *.o
 *.dylib
 *.a
+temp.*
+a.out
+*.log
+*.bz2
