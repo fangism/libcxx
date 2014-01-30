@@ -1467,8 +1467,8 @@ __pad_and_output(_OutputIterator __s,
 }
 
 #if !defined(__APPLE__) || \
-    (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_8) || \
-    (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_6_0)
+    (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && defined(__MAC_10_8) && __MAC_OS_X_VERSION_MIN_REQUIRED > __MAC_10_8) || \
+    (defined(__IPHONE_OS_VERSION_MIN_REQUIRED) && defined(__IPHONE_6_0) && __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_6_0)
 
 template <class _CharT, class _Traits>
 _LIBCPP_HIDDEN
