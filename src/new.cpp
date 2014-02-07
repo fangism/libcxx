@@ -17,7 +17,7 @@
 #define __has_include(inc) 0
 #endif
 
-#if defined(__APPLE__) && !defined(DARWIN8_LIBSUPCXX)
+#if defined(__APPLE__) && !defined(DARWIN_LIBSUPCXX)
     #include <cxxabi.h>
 
     #ifndef _LIBCPPABI_VERSION
@@ -30,7 +30,7 @@
     #if defined(LIBCXXRT) || __has_include(<cxxabi.h>)
         #include <cxxabi.h>
     #endif  // __has_include(<cxxabi.h>)
-    #if defined(DARWIN8_LIBSUPCXX)
+    #if defined(DARWIN_LIBSUPCXX)
         extern std::new_handler	__new_handler;
     #endif
     #if !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__)
@@ -38,7 +38,7 @@
     #endif  // _LIBCPPABI_VERSION
 #endif
 
-#if defined(__APPLE__) && defined(DARWIN8_LIBSUPCXX)
+#if defined(__APPLE__) && defined(DARWIN_LIBSUPCXX)
 // should clang provide -DPIC
 #define	PIC	1
 #include <bits/os_defines.h>
@@ -160,7 +160,7 @@ operator delete[] (void* ptr, const std::nothrow_t&) _NOEXCEPT
 namespace std
 {
 
-#if	!defined(DARWIN8_LIBSUPCXX)
+#if	!defined(DARWIN_LIBSUPCXX)
 #ifndef __GLIBCXX__
 const nothrow_t nothrow = {};
 #endif
@@ -176,7 +176,7 @@ set_new_handler(new_handler handler) _NOEXCEPT
     return __sync_lock_test_and_set(&__new_handler, handler);
 }
 #endif
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || defined(DARWIN_LIBSUPCXX)
 new_handler
 get_new_handler() _NOEXCEPT
 {
@@ -206,7 +206,7 @@ bad_alloc::~bad_alloc() _NOEXCEPT
 }
 #endif // !__GLIBCXX__
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || (defined(DARWIN_LIBSUPCXX) && DARWIN_LIBSUPCXX < 10)
 const char*
 bad_alloc::what() const _NOEXCEPT
 {
