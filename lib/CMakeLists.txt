@@ -58,7 +58,6 @@ if ( APPLE )
       OUTPUT_VARIABLE CXX_LIBDIR
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-    list(APPEND compile_flags "-U__STRICT_ANSI__")
     list(APPEND link_flags
       "-compatibility_version 1"
       "-Wl,-unexported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/libc++unexp.exp"
