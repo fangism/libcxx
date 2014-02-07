@@ -37,7 +37,7 @@ std::bad_cast::~bad_cast() _NOEXCEPT
 }
 #endif
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || (defined(DARWIN_LIBSUPCXX) && DARWIN_LIBSUPCXX < 10)
 const char*
 std::bad_cast::what() const _NOEXCEPT
 {
@@ -50,7 +50,7 @@ std::bad_typeid::~bad_typeid() _NOEXCEPT
 {
 }
 #endif
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || (defined(DARWIN_LIBSUPCXX) && DARWIN_LIBSUPCXX < 10)
 const char*
 std::bad_typeid::what() const _NOEXCEPT
 {

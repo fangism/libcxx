@@ -66,15 +66,12 @@ if ( APPLE )
       "${CXX_LIBDIR}/lib/darwin/libclang_rt.${CMAKE_OSX_ARCHITECTURES}.a"
       "/usr/lib/libSystem.B.dylib"
       "-lSystemStubs" )
-  else()
-  if ( CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "10.6" )
+  elseif ( CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "10.6" )
     list(APPEND compile_flags "-U__STRICT_ANSI__")
     list(APPEND link_flags
       "-compatibility_version 1"
-      "-current_version ${LIBCXX_VERSION}"
-      "-install_name /usr/lib/libc++.1.dylib"
-      "-Wl,-reexport_library,/usr/lib/libc++abi.dylib"
       "-Wl,-unexported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/libc++unexp.exp"
+      "-lgcc_s.1"
       "/usr/lib/libSystem.B.dylib")
   else()
     if ( ${CMAKE_OSX_SYSROOT} )
@@ -99,7 +96,6 @@ if ( APPLE )
       "${OSX_RE_EXPORT_LINE}"
       "-Wl,-force_symbols_not_weak_list,${CMAKE_CURRENT_SOURCE_DIR}/notweak.exp"
       "-Wl,-force_symbols_weak_list,${CMAKE_CURRENT_SOURCE_DIR}/weak.exp")
-  endif()
   endif()
 endif()
 

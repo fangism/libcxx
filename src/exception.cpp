@@ -17,7 +17,7 @@
 #endif
 
 // darwin8: there is no __cxxabiapple namespace anywhere
-#if defined(__APPLE__) && !defined(DARWIN8_LIBSUPCXX)
+#if defined(__APPLE__) && !defined(DARWIN_LIBSUPCXX)
   #include <cxxabi.h>
 
   using namespace __cxxabiv1;
@@ -32,7 +32,7 @@
   #endif  // _LIBCPPABI_VERSION
 #elif defined(LIBCXXRT) || __has_include(<cxxabi.h>)
   #include <cxxabi.h>
-  #if defined(DARWIN8_LIBSUPCXX)
+  #if defined(DARWIN_LIBSUPCXX)
   namespace __cxxabiv1 {
     extern std::terminate_handler  __terminate_handler;
     extern std::unexpected_handler __unexpected_handler;
@@ -47,7 +47,7 @@
   static std::unexpected_handler __unexpected_handler;
 #endif // __has_include(<cxxabi.h>)
 
-#if defined(__APPLE__) && defined(DARWIN8_LIBSUPCXX)
+#if defined(__APPLE__) && defined(DARWIN_LIBSUPCXX)
 // should clang provide -DPIC
 #define	PIC	1
 #include <bits/os_defines.h>
@@ -67,7 +67,7 @@ set_unexpected(unexpected_handler func) _NOEXCEPT
     return __sync_lock_test_and_set(&__unexpected_handler, func);
 }
 #endif
-#if __PRED__ || defined(DARWIN8_LIBSUPCXX)
+#if __PRED__ || defined(DARWIN_LIBSUPCXX)
 unexpected_handler
 get_unexpected() _NOEXCEPT
 {
@@ -98,7 +98,7 @@ set_terminate(terminate_handler func) _NOEXCEPT
 }
 
 #endif
-#if __PRED__ || defined(DARWIN8_LIBSUPCXX)
+#if __PRED__ || defined(DARWIN_LIBSUPCXX)
 terminate_handler
 get_terminate() _NOEXCEPT
 {
@@ -142,7 +142,7 @@ terminate() _NOEXCEPT
 #undef	__PRED__
 
 #if !defined(LIBCXXRT) && !defined(__GLIBCXX__) && !defined(__EMSCRIPTEN__)
-#if !defined(DARWIN8_LIBSUPCXX)
+#if !defined(DARWIN_LIBSUPCXX)
 bool uncaught_exception() _NOEXCEPT
 {
 #if defined(__APPLE__) || defined(_LIBCPPABI_VERSION)
@@ -180,7 +180,7 @@ bad_exception::~bad_exception() _NOEXCEPT
 {
 }
 #endif
-#if !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(_LIBCPPABI_VERSION) && !defined(__GLIBCXX__) || (defined(DARWIN_LIBSUPCXX) && DARWIN_LIBSUPCXX < 10)
 const char* bad_exception::what() const _NOEXCEPT
 {
   return "std::bad_exception";
@@ -188,7 +188,7 @@ const char* bad_exception::what() const _NOEXCEPT
 
 #endif
 
-#define	GLIBCXX_HAS___EXCEPTION_PTR		!defined(DARWIN8_LIBSUPCXX)
+#define	GLIBCXX_HAS___EXCEPTION_PTR		!defined(DARWIN_LIBSUPCXX)
 
 #if defined(__GLIBCXX__) && GLIBCXX_HAS___EXCEPTION_PTR
 
@@ -285,7 +285,7 @@ nested_exception::nested_exception() _NOEXCEPT
 {
 }
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || defined(DARWIN_LIBSUPCXX)
 
 nested_exception::~nested_exception() _NOEXCEPT
 {
@@ -302,7 +302,7 @@ nested_exception::rethrow_nested() const
     rethrow_exception(__ptr_);
 }
 
-#if !defined(__GLIBCXX__) || defined(DARWIN8_LIBSUPCXX)
+#if !defined(__GLIBCXX__) || defined(DARWIN_LIBSUPCXX)
 
 exception_ptr current_exception() _NOEXCEPT
 {
