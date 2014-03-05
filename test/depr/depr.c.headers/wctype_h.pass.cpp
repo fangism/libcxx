@@ -16,6 +16,9 @@
 #error WEOF not defined
 #endif
 
+// on darwin8, <_wctype.h> defines these functions as:
+// #define isalpha(c)      __istype((c), _CTYPE_A)
+#if !defined(DARWIN_LIBSUPCXX) || (DARWIN_LIBSUPCXX >= 9)
 #ifdef iswalnum
 #error iswalnum defined
 #endif
@@ -86,6 +89,7 @@
 
 #ifdef wctrans
 #error wctrans defined
+#endif
 #endif
 
 int main()
