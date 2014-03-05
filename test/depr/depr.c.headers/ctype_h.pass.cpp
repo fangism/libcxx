@@ -13,6 +13,9 @@
 #include <type_traits>
 #include <cassert>
 
+// on darwin8, <ctype.h> defines these functions as:
+// #define isalpha(c)      __istype((c), _CTYPE_A)
+#if !defined(DARWIN_LIBSUPCXX) || (DARWIN_LIBSUPCXX >= 9)
 #ifdef isalnum
 #error isalnum defined
 #endif
@@ -67,6 +70,7 @@
 
 #ifdef toupper
 #error toupper defined
+#endif
 #endif
 
 int main()
