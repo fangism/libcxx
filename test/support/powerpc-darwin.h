@@ -1,6 +1,9 @@
 #ifndef	__LIBCXX_TEST_SUPPORT_POWERPC_DARWIN_H__
 #define	__LIBCXX_TEST_SUPPORT_POWERPC_DARWIN_H__
 
+#if defined(__APPLE__) && defined(__ppc__)
+#define	__powerpc_darwin__		1
+#endif
 // control certain workarounds for the powerpc-darwin8 port
 
 /**
@@ -9,7 +12,9 @@
 	will fail, but as long as the underlying integer types are
 	the same size (which is true on PPC32), then it is still safe.
  */
+#if defined(__powerpc_darwin__)
 #define	PTRDIFF_T_VS_SIZE_T_DIFFER
+#endif
 
 /**
 	PPC32 doesn't have native 64b atomic operations.

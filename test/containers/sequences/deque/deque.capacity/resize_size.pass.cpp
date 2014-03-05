@@ -15,6 +15,7 @@
 #include <cassert>
 
 #include "min_allocator.h"
+#include "powerpc-darwin.h"
 
 template <class C>
 C
@@ -43,7 +44,11 @@ void
 test(C& c1, int size)
 {
     typedef typename C::const_iterator CI;
+#if defined(__powerpc_darwin__)
+    typename C::size_type c1_osize = c1.size();
+#else
     std::size_t c1_osize = c1.size();
+#endif
     c1.resize(size);
     assert(c1.size() == size);
     assert(distance(c1.begin(), c1.end()) == c1.size());
