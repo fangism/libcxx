@@ -9,6 +9,13 @@
 
 // test <cinttypes>
 
+/* "C++ implementations should define these macros only when
+ *  __STDC_FORMAT_MACROS is defined before <inttypes.h> is included."
+ */
+#ifndef	__STDC_FORMAT_MACROS
+#define	__STDC_FORMAT_MACROS
+#endif
+
 #include <cinttypes>
 #include <type_traits>
 
