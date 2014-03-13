@@ -13,6 +13,12 @@
 
 #include <limits>
 
+#if (defined(__i386__) || defined(__x86_64__))
+static const bool integral_types_trap = true;
+#else
+static const bool integral_types_trap = false;
+#endif
+
 template <class T, bool expected>
 void
 test()
@@ -23,32 +29,25 @@ test()
     static_assert(std::numeric_limits<const volatile T>::traps == expected, "traps test 4");
 }
 
-// see <limits>:
-#if	(defined(__i386__) || defined(__x86_64__))
-static const bool is_x86 = true;
-#else
-static const bool is_x86 = false;
-#endif
-
 int main()
 {
     test<bool, false>();
-    test<char, is_x86>();
-    test<signed char, is_x86>();
-    test<unsigned char, is_x86>();
-    test<wchar_t, is_x86>();
+    test<char, integral_types_trap>();
+    test<signed char, integral_types_trap>();
+    test<unsigned char, integral_types_trap>();
+    test<wchar_t, integral_types_trap>();
 #ifndef _LIBCPP_HAS_NO_UNICODE_CHARS
-    test<char16_t, is_x86>();
-    test<char32_t, is_x86>();
+    test<char16_t, integral_types_trap>();
+    test<char32_t, integral_types_trap>();
 #endif  // _LIBCPP_HAS_NO_UNICODE_CHARS
-    test<short, is_x86>();
-    test<unsigned short, is_x86>();
-    test<int, is_x86>();
-    test<unsigned int, is_x86>();
-    test<long, is_x86>();
-    test<unsigned long, is_x86>();
-    test<long long, is_x86>();
-    test<unsigned long long, is_x86>();
+    test<short, integral_types_trap>();
+    test<unsigned short, integral_types_trap>();
+    test<int, integral_types_trap>();
+    test<unsigned int, integral_types_trap>();
+    test<long, integral_types_trap>();
+    test<unsigned long, integral_types_trap>();
+    test<long long, integral_types_trap>();
+    test<unsigned long long, integral_types_trap>();
     test<float, false>();
     test<double, false>();
     test<long double, false>();
