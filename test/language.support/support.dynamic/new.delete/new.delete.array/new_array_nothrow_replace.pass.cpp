@@ -17,7 +17,10 @@
 
 int new_called = 0;
 
-void* operator new(std::size_t s) throw(std::bad_alloc)
+void* operator new(std::size_t s)
+#if !__has_feature(cxx_noexcept)
+	throw(std::bad_alloc)
+#endif
 {
     ++new_called;
     return std::malloc(s);
