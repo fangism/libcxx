@@ -7,20 +7,29 @@
 //
 //===----------------------------------------------------------------------===//
 
-// <shared_mutex>
+// This is for bugs 18853 and 19118
 
-// class shared_mutex;
+#if __cplusplus >= 201103L
 
-// shared_mutex(const shared_mutex&) = delete;
+#include <tuple>
+#include <functional>
 
-#include <shared_mutex>
-
-int main()
+struct X
 {
-#if _LIBCPP_STD_VER > 11
-    std::shared_mutex m0;
-    std::shared_mutex m1(m0);
-#else
-#   error
-#endif
+    X() {}
+
+    template <class T>
+    X(T);
+
+    void operator()() {}
+};
+
+int
+main()
+{
+    X x;
+    std::function<void()> f(x);
 }
+#else
+int main () {}
+#endif
