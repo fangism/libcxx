@@ -29,7 +29,6 @@
 #include <type_traits>
 
 #include "min_allocator.h"
-#include "powerpc-darwin.h"
 
 int main()
 {

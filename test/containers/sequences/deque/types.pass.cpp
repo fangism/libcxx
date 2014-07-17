@@ -36,7 +36,6 @@
 #include "test_allocator.h"
 #include "../../Copyable.h"
 #include "min_allocator.h"
-#include "powerpc-darwin.h"
 
 template <class T, class Allocator>
 void

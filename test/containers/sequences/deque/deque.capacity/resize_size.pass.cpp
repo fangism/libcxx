@@ -15,7 +15,6 @@
 #include <cassert>
 
 #include "min_allocator.h"
-#include "powerpc-darwin.h"
 
 template <class C>
 C
