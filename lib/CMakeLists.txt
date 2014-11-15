@@ -62,7 +62,7 @@ if ( APPLE )
       "-compatibility_version 1"
       "-Wl,-unexported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/libc++unexp.exp"
       "-lgcc_s.${CMAKE_OSX_DEPLOYMENT_TARGET}"
-      "${CXX_LIBDIR}/lib/darwin/libclang_rt.${CMAKE_OSX_ARCHITECTURES}.a"
+      "${CXX_LIBDIR}/lib/darwin/libclang_rt.builtins-${CMAKE_OSX_ARCHITECTURES}.a"
       "/usr/lib/libSystem.B.dylib"
       "-lSystemStubs" )
   elseif ( CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "10.6" )
