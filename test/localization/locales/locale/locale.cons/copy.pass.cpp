@@ -7,6 +7,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.fr_FR.UTF-8
+// UNSUPPORTED: msan, asan
+
 // <locale>
 
 // locale(const locale& other) throw();

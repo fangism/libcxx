@@ -7,11 +7,22 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.en_US.UTF-8
+// REQUIRES: locale.fr_FR.UTF-8
+// REQUIRES: locale.ru_RU.UTF-8
+// REQUIRES: locale.zh_CN.UTF-8
+
 // <locale>
 
 // class moneypunct_byname<charT, International>
 
 // charT thousands_sep() const;
+
+// Failure related to GLIBC's use of U00A0 as mon_thousands_sep
+// and U002E as mon_decimal_point.
+// TODO: U00A0 should be investigated.
+// Possibly related to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=16006
+// XFAIL: linux-gnu
 
 #include <locale>
 #include <limits>

@@ -7,6 +7,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.en_US.UTF-8
+// REQUIRES: locale.fr_FR.UTF-8
+
 // <locale>
 
 // template <class CharT, class OutputIterator = ostreambuf_iterator<CharT> >
@@ -20,6 +23,9 @@
 // protected:
 //     ~time_put_byname();
 // };
+
+// TODO: investigation needed
+// XFAIL: linux-gnu
 
 #include <locale>
 #include <cassert>

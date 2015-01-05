@@ -6,6 +6,9 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// UNSUPPORTED: libcpp-has-no-threads
+//  ... assertion fails line 32
 
 // <atomic>
 
@@ -44,7 +47,7 @@ struct A
 {
     int i;
 
-    explicit A(int d = 0) : i(d) {}
+    explicit A(int d = 0) noexcept {i=d;}
 
     friend bool operator==(const A& x, const A& y)
         {return x.i == y.i;}

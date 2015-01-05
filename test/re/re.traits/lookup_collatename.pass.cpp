@@ -7,6 +7,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.cs_CZ.ISO8859-2
+
 // <regex>
 
 // template <class charT> struct regex_traits;
@@ -14,6 +16,9 @@
 // template <class ForwardIterator>
 //   string_type
 //   lookup_collatename(ForwardIterator first, ForwardIterator last) const;
+
+// TODO: investigation needed
+// XFAIL: linux-gnu
 
 #include <regex>
 #include <iterator>

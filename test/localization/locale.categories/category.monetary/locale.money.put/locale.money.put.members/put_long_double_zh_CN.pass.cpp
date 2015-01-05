@@ -7,12 +7,17 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.zh_CN.UTF-8
+
 // <locale>
 
 // class money_put<charT, OutputIterator>
 
 // iter_type put(iter_type s, bool intl, ios_base& f, char_type fill,
 //               long double units) const;
+
+// TODO For zh_CN GLIBC puts the negative sign after the currency symbol.
+// XFAIL: linux-gnu
 
 #include <locale>
 #include <ios>

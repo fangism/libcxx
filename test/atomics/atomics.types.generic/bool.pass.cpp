@@ -6,6 +6,8 @@
 // Source Licenses. See LICENSE.TXT for details.
 //
 //===----------------------------------------------------------------------===//
+//
+// UNSUPPORTED: libcpp-has-no-threads
 
 // <atomic>
 
@@ -53,6 +55,8 @@
 #include <new>
 #include <cassert>
 
+#include <cmpxchg_loop.h>
+
 int main()
 {
     {
@@ -64,6 +68,7 @@ int main()
         std::atomic_init(&obj, true);
         assert(obj == true);
         bool b0 = obj.is_lock_free();
+        (void)b0; // to placate scan-build
         obj.store(false);
         assert(obj == false);
         obj.store(true, std::memory_order_release);
@@ -75,7 +80,7 @@ int main()
         assert(obj.exchange(true, std::memory_order_relaxed) == false);
         assert(obj == true);
         bool x = obj;
-        assert(obj.compare_exchange_weak(x, false) == true);
+        assert(cmpxchg_weak_loop(obj, x, false) == true);
         assert(obj == false);
         assert(x == true);
         assert(obj.compare_exchange_weak(x, true,
@@ -84,9 +89,9 @@ int main()
         assert(x == false);
         obj.store(true);
         x = true;
-        assert(obj.compare_exchange_weak(x, false,
-                                         std::memory_order_seq_cst,
-                                         std::memory_order_seq_cst) == true);
+        assert(cmpxchg_weak_loop(obj, x, false,
+                                 std::memory_order_seq_cst,
+                                 std::memory_order_seq_cst) == true);
         assert(obj == false);
         assert(x == true);
         x = true;
@@ -119,6 +124,7 @@ int main()
         std::atomic_init(&obj, true);
         assert(obj == true);
         bool b0 = obj.is_lock_free();
+        (void)b0; // to placate scan-build
         obj.store(false);
         assert(obj == false);
         obj.store(true, std::memory_order_release);
@@ -130,7 +136,7 @@ int main()
         assert(obj.exchange(true, std::memory_order_relaxed) == false);
         assert(obj == true);
         bool x = obj;
-        assert(obj.compare_exchange_weak(x, false) == true);
+        assert(cmpxchg_weak_loop(obj, x, false) == true);
         assert(obj == false);
         assert(x == true);
         assert(obj.compare_exchange_weak(x, true,
@@ -139,9 +145,9 @@ int main()
         assert(x == false);
         obj.store(true);
         x = true;
-        assert(obj.compare_exchange_weak(x, false,
-                                         std::memory_order_seq_cst,
-                                         std::memory_order_seq_cst) == true);
+        assert(cmpxchg_weak_loop(obj, x, false,
+                                 std::memory_order_seq_cst,
+                                 std::memory_order_seq_cst) == true);
         assert(obj == false);
         assert(x == true);
         x = true;
@@ -174,6 +180,7 @@ int main()
         std::atomic_init(&obj, true);
         assert(obj == true);
         bool b0 = obj.is_lock_free();
+        (void)b0; // to placate scan-build
         obj.store(false);
         assert(obj == false);
         obj.store(true, std::memory_order_release);
@@ -185,7 +192,7 @@ int main()
         assert(obj.exchange(true, std::memory_order_relaxed) == false);
         assert(obj == true);
         bool x = obj;
-        assert(obj.compare_exchange_weak(x, false) == true);
+        assert(cmpxchg_weak_loop(obj, x, false) == true);
         assert(obj == false);
         assert(x == true);
         assert(obj.compare_exchange_weak(x, true,
@@ -194,9 +201,9 @@ int main()
         assert(x == false);
         obj.store(true);
         x = true;
-        assert(obj.compare_exchange_weak(x, false,
-                                         std::memory_order_seq_cst,
-                                         std::memory_order_seq_cst) == true);
+        assert(cmpxchg_weak_loop(obj, x, false,
+                                 std::memory_order_seq_cst,
+                                 std::memory_order_seq_cst) == true);
         assert(obj == false);
         assert(x == true);
         x = true;

@@ -7,12 +7,20 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.en_US.UTF-8
+// REQUIRES: locale.fr_FR.UTF-8
+// REQUIRES: locale.ru_RU.UTF-8
+// REQUIRES: locale.zh_CN.UTF-8
+
 // <locale>
 
 // class time_get_byname<charT, InputIterator>
 
 // iter_type get(iter_type s, iter_type end, ios_base& f,
 //               ios_base::iostate& err, tm *t, char format, char modifier = 0) const;
+
+// TODO: investigation needed
+// XFAIL: linux-gnu
 
 #include <locale>
 #include <cassert>

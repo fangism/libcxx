@@ -11,6 +11,13 @@
 #define ITERATORS_H
 
 #include <iterator>
+#include <cassert>
+
+#ifndef _LIBCPP_HAS_NO_DELETED_FUNCTIONS
+#define DELETE_FUNCTION = delete
+#else
+#define DELETE_FUNCTION
+#endif
 
 template <class It>
 class output_iterator
@@ -37,6 +44,9 @@ public:
     output_iterator& operator++() {++it_; return *this;}
     output_iterator operator++(int)
         {output_iterator tmp(*this); ++(*this); return tmp;}
+
+    template <class T>
+    void operator,(T const &) DELETE_FUNCTION;
 };
 
 template <class It>
@@ -70,6 +80,9 @@ public:
         {return x.it_ == y.it_;}
     friend bool operator!=(const input_iterator& x, const input_iterator& y)
         {return !(x == y);}
+
+    template <class T>
+    void operator,(T const &) DELETE_FUNCTION;
 };
 
 template <class T, class U>
@@ -119,6 +132,9 @@ public:
         {return x.it_ == y.it_;}
     friend bool operator!=(const forward_iterator& x, const forward_iterator& y)
         {return !(x == y);}
+
+    template <class T>
+    void operator,(T const &) DELETE_FUNCTION;
 };
 
 template <class T, class U>
@@ -167,6 +183,9 @@ public:
     bidirectional_iterator& operator--() {--it_; return *this;}
     bidirectional_iterator operator--(int)
         {bidirectional_iterator tmp(*this); --(*this); return tmp;}
+
+    template <class T>
+    void operator,(T const &) DELETE_FUNCTION;
 };
 
 template <class T, class U>
@@ -226,6 +245,9 @@ public:
         {random_access_iterator tmp(*this); tmp -= n; return tmp;}
 
     reference operator[](difference_type n) const {return it_[n];}
+
+    template <class T>
+    void operator,(T const &) DELETE_FUNCTION;
 };
 
 template <class T, class U>
@@ -284,6 +306,108 @@ operator-(const random_access_iterator<T>& x, const random_access_iterator<U>& y
     return x.base() - y.base();
 }
 
+template <class It>
+class comma_iterator
+{
+    It it_;
+
+    template <class U> friend class comma_iterator;
+public:
+    typedef          std::random_access_iterator_tag           iterator_category;
+    typedef typename std::iterator_traits<It>::value_type      value_type;
+    typedef typename std::iterator_traits<It>::difference_type difference_type;
+    typedef It                                                 pointer;
+    typedef typename std::iterator_traits<It>::reference       reference;
+
+    It base() const {return it_;}
+
+    comma_iterator() : it_() {}
+    explicit comma_iterator(It it) : it_(it) {}
+   template <class U>
+        comma_iterator(const comma_iterator<U>& u) :it_(u.it_) {}
+
+    reference operator*() const {return *it_;}
+    pointer operator->() const {return it_;}
+
+    comma_iterator& operator++() {++it_; return *this;}
+    comma_iterator operator++(int)
+        {comma_iterator tmp(*this); ++(*this); return tmp;}
+
+    comma_iterator& operator--() {--it_; return *this;}
+    comma_iterator operator--(int)
+        {comma_iterator tmp(*this); --(*this); return tmp;}
+
+    comma_iterator& operator+=(difference_type n) {it_ += n; return *this;}
+    comma_iterator operator+(difference_type n) const
+        {comma_iterator tmp(*this); tmp += n; return tmp;}
+    friend comma_iterator operator+(difference_type n, comma_iterator x)
+        {x += n; return x;}
+    comma_iterator& operator-=(difference_type n) {return *this += -n;}
+    comma_iterator operator-(difference_type n) const
+        {comma_iterator tmp(*this); tmp -= n; return tmp;}
+
+    reference operator[](difference_type n) const {return it_[n];}
+    template <typename T>
+    void operator,(const T &) { assert(false); }
+};
+
+template <class T, class U>
+inline
+bool
+operator==(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return x.base() == y.base();
+}
+
+template <class T, class U>
+inline
+bool
+operator!=(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return !(x == y);
+}
+
+template <class T, class U>
+inline
+bool
+operator<(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return x.base() < y.base();
+}
+
+template <class T, class U>
+inline
+bool
+operator<=(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return !(y < x);
+}
+
+template <class T, class U>
+inline
+bool
+operator>(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return y < x;
+}
+
+template <class T, class U>
+inline
+bool
+operator>=(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return !(x < y);
+}
+
+template <class T, class U>
+inline
+typename std::iterator_traits<T>::difference_type
+operator-(const comma_iterator<T>& x, const comma_iterator<U>& y)
+{
+    return x.base() - y.base();
+}
+
+
 template <class Iter>
 inline Iter base(output_iterator<Iter> i) { return i.base(); }
 
@@ -299,7 +423,12 @@ inline Iter base(bidirectional_iterator<Iter> i) { return i.base(); }
 template <class Iter>
 inline Iter base(random_access_iterator<Iter> i) { return i.base(); }
 
+template <class Iter>
+inline Iter base(comma_iterator<Iter> i) { return i.base(); }
+
 template <class Iter>    // everything else
 inline Iter base(Iter i) { return i; }
+
+#undef DELETE_FUNCTION
 
 #endif  // ITERATORS_H

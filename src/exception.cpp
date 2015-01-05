@@ -17,7 +17,7 @@
 #endif
 
 // darwin8: there is no __cxxabiapple namespace anywhere
-#if defined(__APPLE__) && !defined(DARWIN_LIBSUPCXX)
+#if defined(__APPLE__) && !defined(LIBCXXRT) && !defined(DARWIN_LIBSUPCXX)
   #include <cxxabi.h>
 
   using namespace __cxxabiv1;

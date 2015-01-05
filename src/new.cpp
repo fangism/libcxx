@@ -17,7 +17,7 @@
 #define __has_include(inc) 0
 #endif
 
-#if defined(__APPLE__) && !defined(DARWIN_LIBSUPCXX)
+#if defined(__APPLE__) && !defined(LIBCXXRT) && !defined(DARWIN_LIBSUPCXX)
     #include <cxxabi.h>
 
     #ifndef _LIBCPPABI_VERSION
@@ -215,8 +215,6 @@ bad_alloc::what() const _NOEXCEPT
 
 #endif // !__GLIBCXX__
 
-#endif //LIBCXXRT
-
 bad_array_new_length::bad_array_new_length() _NOEXCEPT
 {
 }
@@ -224,6 +222,14 @@ bad_array_new_length::bad_array_new_length() _NOEXCEPT
 bad_array_new_length::~bad_array_new_length() _NOEXCEPT
 {
 }
+
+const char*
+bad_array_new_length::what() const _NOEXCEPT
+{
+    return "bad_array_new_length";
+}
+
+#endif //LIBCXXRT
 
 const char*
 bad_array_length::what() const _NOEXCEPT
@@ -237,12 +243,6 @@ bad_array_length::bad_array_length() _NOEXCEPT
 
 bad_array_length::~bad_array_length() _NOEXCEPT
 {
-}
-
-const char*
-bad_array_new_length::what() const _NOEXCEPT
-{
-    return "bad_array_new_length";
 }
 
 #endif // _LIBCPPABI_VERSION

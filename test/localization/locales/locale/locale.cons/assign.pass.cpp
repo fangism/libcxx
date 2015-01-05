@@ -7,6 +7,9 @@
 //
 //===----------------------------------------------------------------------===//
 
+// REQUIRES: locale.ru_RU.UTF-8
+// UNSUPPORTED: msan, asan
+
 // <locale>
 
 // const locale& operator=(const locale& other) throw();
